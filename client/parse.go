@@ -26,12 +26,16 @@ func findSample(body []byte) (input [][]byte, output [][]byte, err error) {
 	if a == nil || b == nil || len(a) != len(b) {
 		return nil, nil, fmt.Errorf("Cannot parse sample with input %v and output %v", len(a), len(b))
 	}
-	newline := regexp.MustCompile(`<[\s/br]+?>`)
-	filter := func(src []byte) []byte {
-		src = newline.ReplaceAll(src, []byte("\n"))
-		s := html.UnescapeString(string(src))
-		return []byte(strings.TrimSpace(s) + "\n")
+
+	newline := regexp.MustCompile(`<div class="test-example-line[^"]*">`)
+	newline2 := regexp.MustCompile(`</div>`)
+	func filter(src []byte) []byte {
+	src = newline.ReplaceAll(src, []byte(""))
+	src = newline2.ReplaceAll(src, []byte("\n"))
+	s := html.UnescapeString(string(src))
+	return []byte(strings.TrimSpace(s) + "\n")
 	}
+
 	for i := 0; i < len(a); i++ {
 		input = append(input, filter(a[i][1]))
 		output = append(output, filter(b[i][1]))
