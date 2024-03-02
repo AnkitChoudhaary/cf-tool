@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/xalanq/cf-tool/util"
+	"cf-tool/util"
 
 	"github.com/k0kubun/go-ansi"
 
@@ -29,11 +29,12 @@ func findSample(body []byte) (input [][]byte, output [][]byte, err error) {
 
 	newline := regexp.MustCompile(`<div class="test-example-line[^"]*">`)
 	newline2 := regexp.MustCompile(`</div>`)
-	func filter(src []byte) []byte {
-	src = newline.ReplaceAll(src, []byte(""))
-	src = newline2.ReplaceAll(src, []byte("\n"))
-	s := html.UnescapeString(string(src))
-	return []byte(strings.TrimSpace(s) + "\n")
+
+	filter := func(src []byte) []byte {
+		src = newline.ReplaceAll(src, []byte(""))
+		src = newline2.ReplaceAll(src, []byte("\n"))
+		s := html.UnescapeString(string(src))
+		return []byte(strings.TrimSpace(s) + "\n")
 	}
 
 	for i := 0; i < len(a); i++ {
